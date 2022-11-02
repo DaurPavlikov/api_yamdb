@@ -8,6 +8,8 @@ from api.views import (
     ReviewViewSet,
     TitlesViewSet,
     UserViewSet,
+    SignupViewSet,
+    TokenViewSet,
 )
 
 app_name = 'api'
@@ -28,7 +30,11 @@ router.register(
     basename='comments',
 )
 urlpatterns = [
-    # path('v1/auth/token/', ... ),
-    # path('v1/auth/signup/', ... ),
+    path('v1/auth/signup/', SignupViewSet.as_view(
+        {'post': 'create'}
+    ), name='signup'),
+    path('v1/auth/token/', TokenViewSet.as_view(
+        {'post': 'gettoken'}
+    ), name='token'),
     path('v1/', include(router.urls)),
 ]
