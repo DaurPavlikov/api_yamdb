@@ -8,6 +8,10 @@ from django.shortcuts import get_object_or_404
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    review = serializers.SlugRelatedField(
+        slug_field='text',
+        read_only=True
+    )
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username'
@@ -28,7 +32,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
         read_only=True
     )
     score = serializers.IntegerField(max_value=10, min_value=1)
-    
+
     def validate(self, data):
         request = self.context['request']
         author = request.user
