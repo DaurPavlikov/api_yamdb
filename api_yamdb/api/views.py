@@ -9,11 +9,13 @@ from rest_framework.response import Response
 from rest_framework.pagination import (
     LimitOffsetPagination, PageNumberPagination)
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from rest_framework.decorators import action
 from reviews.models import Review, Title, Category, Genre
 from users.permissions import (
     IsAutorModeratorAdminOrReadOnly, IsAdminOrReadOnly, IsAdmin)
-from users.serializers import SignupSerializer, TokenSerializer
+from users.serializers import (
+    SignupSerializer, TokenSerializer, UserSerializer
+)
 from users.models import User
 from api.filters import TitleFilter
 from api.serializers import (CategoriesSerializer,
@@ -55,30 +57,38 @@ class CommentViewSet(viewsets.ModelViewSet):
         return review.comments.all()
 
 
-class TokenViewSet(viewsets.ViewSet):
+class UserViewSet(viewsets.ModelViewSet):
+    """Api управления пользователями."""
+    queryset = User.objects.all().order_by('username')
+    serializer_class = UserSerializer
+    permission_classes = (IsAdmin, )
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    lookup_field = 'username'
+    search_fields = ('username',)
 
-    permission_classes = [permissions.AllowAny, ]
-
-    def gettoken(self, request):
-        serializer = TokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        username = serializer.data.get('username')
-        confirmation_code = serializer.data.get('confirmation_code')
-        user = get_object_or_404(User, username=username)
-        if not default_token_generator.check_token(user, confirmation_code):
-            return Response(
-                'Неверный confirmation code',
-                status=status.HTTP_400_BAD_REQUEST
+    @action(
+        detail=False, methods=['get', 'patch'],
+        permission_classes=[permissions.IsAuthenticated]
+    )
+    def me(self, request):
+        """Личные данные пользователя."""
+        if request.method == 'PATCH':
+            serializer = self.get_serializer(
+                request.user, data=request.data, partial=True
             )
-        refresh = RefreshToken.for_user(user)
-        return Response({'token': str(refresh.access_token)})
+            serializer.is_valid(raise_exception=True)
+            serializer.save(role=request.user.role)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SignupViewSet(viewsets.ViewSet):
-
+    """Api авторизации."""
     permission_classes = [permissions.AllowAny, ]
 
     def create(self, request):
+        """Функция отправки кода подтверждения."""
         username = request.data.get('username')
         email = request.data.get('email')
         if User.objects.filter(email=email, username=username).exists():
@@ -94,7 +104,24 @@ class SignupViewSet(viewsets.ViewSet):
         send_mail(
             email_header, message, from_email, [email], fail_silently=False
         )
-        return Response({'confirmation_code': confirmation_code})
+        return Response(
+            {'email': email, 'username': username}, status=status.HTTP_200_OK
+        )
+
+    def gettoken(self, request):
+        """Функция получения токена авторизации."""
+        serializer = TokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.data.get('username')
+        confirmation_code = serializer.data.get('confirmation_code')
+        user = get_object_or_404(User, username=username)
+        if not default_token_generator.check_token(user, confirmation_code):
+            return Response(
+                'Неверный код подтверждения',
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        refresh = RefreshToken.for_user(user)
+        return Response({'token': str(refresh.access_token)})
 
 
 class TitlesViewSet(viewsets.ModelViewSet):

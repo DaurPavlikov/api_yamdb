@@ -5,7 +5,14 @@ from rest_framework.validators import UniqueValidator
 from .models import User
 
 
-class SignupSerializer(serializers.ModelSerializer):
+class TokenSerializer(serializers.Serializer):
+    """Токен."""
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Пользователь."""
     username = serializers.CharField(required=True, validators=[
         MinLengthValidator(
             3,
@@ -18,10 +25,14 @@ class SignupSerializer(serializers.ModelSerializer):
     ])
 
     class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role',
+        )
+
+
+class SignupSerializer(UserSerializer):
+    """Регистрация пользователя."""
+    class Meta:
         fields = ('username', 'email')
         model = User
-
-
-class TokenSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True)
-    confirmation_code = serializers.CharField(required=True)

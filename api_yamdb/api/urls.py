@@ -7,15 +7,14 @@ from api.views import (
     GenresViewSet,
     ReviewViewSet,
     TitlesViewSet,
-    #UserViewSet,
+    UserViewSet,
     SignupViewSet,
-    TokenViewSet,
 )
 
 app_name = 'api'
 
 router = DefaultRouter()
-#router.register('users', UserViewSet)
+router.register('users', UserViewSet)
 router.register('titles', TitlesViewSet)
 router.register('genres', GenresViewSet, basename='genres')
 router.register('categories', CategoriesViewSet, basename='categories')
@@ -33,7 +32,7 @@ urlpatterns = [
     path('v1/auth/signup/', SignupViewSet.as_view(
         {'post': 'create'}
     ), name='signup'),
-    path('v1/auth/token/', TokenViewSet.as_view(
+    path('v1/auth/token/', SignupViewSet.as_view(
         {'post': 'gettoken'}
     ), name='token'),
     path('v1/', include(router.urls)),
