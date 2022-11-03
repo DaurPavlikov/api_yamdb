@@ -2,13 +2,16 @@ from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
-from rest_framework import serializers, viewsets, filters, mixins, status, permissions
+from rest_framework import (
+    serializers, viewsets, filters, mixins, status, permissions)
 from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.pagination import (
+    LimitOffsetPagination, PageNumberPagination)
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import Review, Title
-from users.permissions import IsAutorModeratorAdminOrReadOnly, IsAdminOrReadOnly, IsAdmin
+from reviews.models import Review, Title, Category, Genre
+from users.permissions import (
+    IsAutorModeratorAdminOrReadOnly, IsAdminOrReadOnly, IsAdmin)
 from users.serializers import SignupSerializer, TokenSerializer
 from users.models import User
 from api.filters import TitleFilter
@@ -19,9 +22,10 @@ from api.serializers import (CategoriesSerializer,
                              CommentSerializer,
                              ReviewSerializer)
 
+
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAutorModeratorAdminOrReadOnly)
+    permission_classes = (IsAutorModeratorAdminOrReadOnly, )
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
@@ -38,7 +42,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAutorModeratorAdminOrReadOnly)
+    permission_classes = (IsAutorModeratorAdminOrReadOnly, )
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
@@ -84,7 +88,6 @@ class SignupViewSet(viewsets.ViewSet):
             user = serializer.save()
         confirmation_code = default_token_generator.make_token(user)
         return Response({'confirmation_code': confirmation_code})
-                             
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
