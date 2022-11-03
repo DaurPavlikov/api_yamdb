@@ -2,6 +2,7 @@ from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
 from rest_framework import (
     serializers, viewsets, filters, mixins, status, permissions)
 from rest_framework.response import Response
@@ -87,6 +88,12 @@ class SignupViewSet(viewsets.ViewSet):
             serializer.is_valid(raise_exception=True)
             user = serializer.save()
         confirmation_code = default_token_generator.make_token(user)
+        email_header = 'Код подтверждения для Yamdb'
+        message = f'Ваш код подтверждения: {confirmation_code}'
+        from_email = 'signup@yamdb.su'
+        send_mail(
+            email_header, message, from_email, [email], fail_silently=False
+        )
         return Response({'confirmation_code': confirmation_code})
 
 
