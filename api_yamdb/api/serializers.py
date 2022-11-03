@@ -1,3 +1,5 @@
+import datetime as dt
+
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from reviews.models import Comment, Review, Category, Genre, Title
@@ -74,11 +76,11 @@ class TitlesSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Title
 
-    def validate_year(self, value):
-        current_year = dt.date.today().year
-        if value > current_year:
-            raise serializers.ValidationError('Проверьте год')
-        return value
+    def validate_year(self, year):
+        current_year = dt.datetime.today().year
+        if year > current_year:
+            raise serializers.ValidationError(f'Некорректный год {year}')
+        return year
 
 
 class TitlesViewSerializer(serializers.ModelSerializer):
