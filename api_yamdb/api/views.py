@@ -2,6 +2,7 @@ from django.db.models import Avg
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import (
     serializers, viewsets, filters, mixins, status, permissions)
 from rest_framework.response import Response
@@ -18,6 +19,7 @@ from users.serializers import (
     SignupSerializer, TokenSerializer, UserSerializer
 )
 from users.models import User
+from api.filters import TitleFilter
 from api.serializers import (CategoriesSerializer,
                              GenresSerializer,
                              TitlesSerializer,
@@ -133,6 +135,9 @@ class TitlesViewSet(viewsets.ModelViewSet):
     serializer_class = TitlesSerializer
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = PageNumberPagination
+    filterset_class = TitleFilter
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:

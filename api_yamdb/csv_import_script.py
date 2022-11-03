@@ -8,7 +8,9 @@ from users.models import User
 path = os.path.join(BASE_DIR, 'static/data/')
 os.chdir(path)
 
-# РРјРїРѕСЂС‚РёСЂСѓРµРј РґР°РЅРЅС‹Рµ РёР· CSV С„Р°Р№Р»Р° РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… User
+# python manage.py shell
+# >>> exec(open('csv_import_script.py').read())
+# Импортируем данные из CSV файла в базу данных User
 with open('users.csv') as file:
     reader = csv.DictReader(file)
     for row in reader:
@@ -23,7 +25,7 @@ with open('users.csv') as file:
         )
         db.save()
 
-# РРјРїРѕСЂС‚РёСЂСѓРµРј РґР°РЅРЅС‹Рµ РёР· CSV С„Р°Р№Р»Р° РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Category
+# Импортируем данные из CSV файла в базу данных Category
 with open('category.csv') as file:
     reader = csv.DictReader(file)
     for row in reader:
@@ -34,7 +36,7 @@ with open('category.csv') as file:
         )
         db.save()
 
-# РРјРїРѕСЂС‚РёСЂСѓРµРј РґР°РЅРЅС‹Рµ РёР· CSV С„Р°Р№Р»Р° РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Genre
+# Импортируем данные из CSV файла в базу данных Genre
 with open('genre.csv') as file:
     reader = csv.DictReader(file)
     for row in reader:
@@ -45,7 +47,7 @@ with open('genre.csv') as file:
         )
         db.save()
 
-# РРјРїРѕСЂС‚РёСЂСѓРµРј РґР°РЅРЅС‹Рµ РёР· CSV С„Р°Р№Р»Р° РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Title
+# Импортируем данные из CSV файла в базу данных Title
 with open('titles.csv') as file:
     reader = csv.DictReader(file)
     for row in reader:
@@ -57,7 +59,7 @@ with open('titles.csv') as file:
         )
         db.save()
 
-# РРјРїРѕСЂС‚РёСЂСѓРµРј РґР°РЅРЅС‹Рµ РёР· CSV С„Р°Р№Р»Р° РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… GenreTitle
+# Импортируем данные из CSV файла в базу данных GenreTitle
 with open('genre_title.csv') as file:
     reader = csv.DictReader(file)
     for row in reader:
@@ -68,7 +70,7 @@ with open('genre_title.csv') as file:
         )
         db.save()
 
-# РРјРїРѕСЂС‚РёСЂСѓРµРј РґР°РЅРЅС‹Рµ РёР· CSV С„Р°Р№Р»Р° РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Review
+# Импортируем данные из CSV файла в базу данных Review
 with open('review.csv') as file:
     reader = csv.DictReader(file)
     for row in reader:
@@ -82,7 +84,7 @@ with open('review.csv') as file:
         )
         db.save()
 
-# РРјРїРѕСЂС‚РёСЂСѓРµРј РґР°РЅРЅС‹Рµ РёР· CSV С„Р°Р№Р»Р° РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Comment
+# Импортируем данные из CSV файла в базу данных Comment
 with open('comments.csv') as file:
     reader = csv.DictReader(file)
     for row in reader:
