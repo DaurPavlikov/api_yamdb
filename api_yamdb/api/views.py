@@ -87,7 +87,7 @@ class SignupViewSet(viewsets.ViewSet):
     """Api авторизации."""
     permission_classes = [permissions.AllowAny, ]
 
-    def create(self, request):
+    def signup(self, request):
         """Функция отправки кода подтверждения."""
         username = request.data.get('username')
         email = request.data.get('email')

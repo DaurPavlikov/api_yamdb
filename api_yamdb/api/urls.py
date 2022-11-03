@@ -30,7 +30,7 @@ router.register(
 )
 urlpatterns = [
     path('v1/auth/signup/', SignupViewSet.as_view(
-        {'post': 'create'}
+        {'post': 'signup'}
     ), name='signup'),
     path('v1/auth/token/', SignupViewSet.as_view(
         {'post': 'gettoken'}
