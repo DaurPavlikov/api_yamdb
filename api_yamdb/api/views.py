@@ -3,36 +3,38 @@ from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import (
-    serializers, viewsets, filters, mixins, status, permissions)
+from rest_framework import viewsets, filters, mixins, status, permissions
 from rest_framework.response import Response
-from rest_framework.pagination import (
-    LimitOffsetPagination, PageNumberPagination)
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
-from reviews.models import Review, Title, Category, Genre, Comment
+
+from reviews.models import Review, Title, Category, Genre
 from users.permissions import (
     IsAutorModeratorAdminOrReadOnly,
     IsAdminOrReadOnly,
-    IsAdmin,)
+    IsAdmin,
+)
 from users.serializers import (
-    SignupSerializer, TokenSerializer, UserSerializer
+    SignupSerializer,
+    TokenSerializer,
+    UserSerializer,
 )
 from users.models import User
 from api.filters import TitleFilter
-from api.serializers import (CategoriesSerializer,
-                             GenresSerializer,
-                             TitlesSerializer,
-                             TitlesViewSerializer,
-                             CommentSerializer,
-                             ReviewsSerializer)
+from api.serializers import (
+    CategoriesSerializer,
+    GenresSerializer,
+    TitlesSerializer,
+    TitlesViewSerializer,
+    CommentSerializer,
+    ReviewsSerializer,
+)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [
         IsAutorModeratorAdminOrReadOnly, ]
-    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
@@ -48,7 +50,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
     permission_classes = [IsAutorModeratorAdminOrReadOnly, ]
-    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         title = get_object_or_404(
@@ -133,8 +134,7 @@ class SignupViewSet(viewsets.ViewSet):
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     serializer_class = TitlesSerializer
-    permission_classes = [IsAdminOrReadOnly]
-    pagination_class = PageNumberPagination
+    permission_classes = (IsAdminOrReadOnly,)
     filterset_class = TitleFilter
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -151,9 +151,7 @@ class ReviewGenreModelMixin(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet
 ):
-    permission_classes = [
-        IsAdminOrReadOnly
-    ]
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name', 'slug')
     lookup_field = 'slug'

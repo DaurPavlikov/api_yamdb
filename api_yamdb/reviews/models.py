@@ -4,14 +4,15 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from users.models import User
 from reviews.validators import validate_year
 
-TEN = 10
-ONE = 1
-TWENTY = 20
+
+MIN_VALUE = MinValueValidator(1)
+MAX_VALUE = MaxValueValidator(10)
+CUTTING_LENGTH = 20
 
 
 class Genre(models.Model):
     """Модель жанры, многие ко многим"""
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
@@ -20,7 +21,7 @@ class Genre(models.Model):
 
 class Category(models.Model):
     """Модель категории одно ко многим """
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self) -> str:
@@ -80,7 +81,7 @@ class Review(models.Model):
         related_name='reviews')
     score = models.PositiveSmallIntegerField(
         default=0,
-        validators=[MinValueValidator(ONE), MaxValueValidator(TEN)],
+        validators=[MIN_VALUE, MAX_VALUE],
         verbose_name='Оценка')
     pub_date = models.DateTimeField(auto_now_add=True,
                                     verbose_name='Дата обзора')
@@ -93,7 +94,7 @@ class Review(models.Model):
                 fields=['title', 'author'], name='unique')]
 
     def __str__(self):
-        self.text[:TWENTY]
+        self.text[:CUTTING_LENGTH]
 
 
 class Comment(models.Model):
@@ -119,4 +120,4 @@ class Comment(models.Model):
         verbose_name_plural = 'Комментарии'
 
     def __str__(self):
-        return self.text[:TWENTY]
+        return self.text[:CUTTING_LENGTH]

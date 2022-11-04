@@ -10,8 +10,8 @@ os.chdir(path)
 
 # python manage.py shell
 # >>> exec(open('csv_import_script.py').read())
-# Импортируем данные из CSV файла в базу данных User
-with open('users.csv') as file:
+# РЎРєСЂРёРїС‚ РґР»СЏ РёСЃРїРѕСЂС‚Р° РёР· С„Р°Р№Р»Р° CSV РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… User
+with open('users.csv', mode="r", encoding="utf-8") as file:
     reader = csv.DictReader(file)
     for row in reader:
         db = User(
@@ -25,8 +25,8 @@ with open('users.csv') as file:
         )
         db.save()
 
-# Импортируем данные из CSV файла в базу данных Category
-with open('category.csv') as file:
+# РЎРєСЂРёРїС‚ РґР»СЏ РёСЃРїРѕСЂС‚Р° РёР· С„Р°Р№Р»Р° CSV РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Category
+with open('category.csv', mode="r", encoding="utf-8") as file:
     reader = csv.DictReader(file)
     for row in reader:
         db = Category(
@@ -36,8 +36,8 @@ with open('category.csv') as file:
         )
         db.save()
 
-# Импортируем данные из CSV файла в базу данных Genre
-with open('genre.csv') as file:
+# РЎРєСЂРёРїС‚ РґР»СЏ РёСЃРїРѕСЂС‚Р° РёР· С„Р°Р№Р»Р° CSV РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Genre
+with open('genre.csv', mode="r", encoding="utf-8") as file:
     reader = csv.DictReader(file)
     for row in reader:
         db = Genre(
@@ -47,8 +47,8 @@ with open('genre.csv') as file:
         )
         db.save()
 
-# Импортируем данные из CSV файла в базу данных Title
-with open('titles.csv') as file:
+# РЎРєСЂРёРїС‚ РґР»СЏ РёСЃРїРѕСЂС‚Р° РёР· С„Р°Р№Р»Р° CSV РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Title
+with open('titles.csv', mode="r", encoding="utf-8") as file:
     reader = csv.DictReader(file)
     for row in reader:
         db = Title(
@@ -59,8 +59,8 @@ with open('titles.csv') as file:
         )
         db.save()
 
-# Импортируем данные из CSV файла в базу данных GenreTitle
-with open('genre_title.csv') as file:
+# РЎРєСЂРёРїС‚ РґР»СЏ РёСЃРїРѕСЂС‚Р° РёР· С„Р°Р№Р»Р° CSV РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… GenreTitle
+with open('genre_title.csv', mode="r", encoding="utf-8") as file:
     reader = csv.DictReader(file)
     for row in reader:
         db = GenreTitle(
@@ -70,8 +70,8 @@ with open('genre_title.csv') as file:
         )
         db.save()
 
-# Импортируем данные из CSV файла в базу данных Review
-with open('review.csv') as file:
+# РЎРєСЂРёРїС‚ РґР»СЏ РёСЃРїРѕСЂС‚Р° РёР· С„Р°Р№Р»Р° CSV РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Review
+with open('review.csv', mode="r", encoding="utf-8") as file:
     reader = csv.DictReader(file)
     for row in reader:
         db = Review(
@@ -84,8 +84,8 @@ with open('review.csv') as file:
         )
         db.save()
 
-# Импортируем данные из CSV файла в базу данных Comment
-with open('comments.csv') as file:
+# РЎРєСЂРёРїС‚ РґР»СЏ РёСЃРїРѕСЂС‚Р° РёР· С„Р°Р№Р»Р° CSV РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… Comment
+with open('comments.csv', mode="r", encoding="utf-8") as file:
     reader = csv.DictReader(file)
     for row in reader:
         db = Comment(

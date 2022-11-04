@@ -1,9 +1,7 @@
 import datetime as dt
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField
 from reviews.models import Comment, Review, Category, Genre, Title
-from users.models import User
 from django.shortcuts import get_object_or_404
 
 
