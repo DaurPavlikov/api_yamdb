@@ -1,8 +1,8 @@
 from django.db.models import Avg
-from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import (
     serializers, viewsets, filters, mixins, status, permissions)
 from rest_framework.response import Response
@@ -10,9 +10,11 @@ from rest_framework.pagination import (
     LimitOffsetPagination, PageNumberPagination)
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
-from reviews.models import Review, Title, Category, Genre
+from reviews.models import Review, Title, Category, Genre, Comment
 from users.permissions import (
-    IsAutorModeratorAdminOrReadOnly, IsAdminOrReadOnly, IsAdmin)
+    IsAutorModeratorAdminOrReadOnly,
+    IsAdminOrReadOnly,
+    IsAdmin,)
 from users.serializers import (
     SignupSerializer, TokenSerializer, UserSerializer
 )
@@ -23,38 +25,42 @@ from api.serializers import (CategoriesSerializer,
                              TitlesSerializer,
                              TitlesViewSerializer,
                              CommentSerializer,
-                             ReviewSerializer)
-
-
-class ReviewViewSet(viewsets.ModelViewSet):
-    serializer_class = ReviewSerializer
-    permission_classes = (IsAutorModeratorAdminOrReadOnly, )
-    pagination_class = LimitOffsetPagination
-
-    def perform_create(self, serializer):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        return title.reviews.all()
-
-    def get_queryset(self):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        if Review.objects.filter(title=title,
-                                 author=self.request.user).exists():
-            raise serializers.ValidationError('Вы уже оставили коммент')
-        serializers.save(author=self.request.user, title=title)
+                             ReviewsSerializer)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAutorModeratorAdminOrReadOnly, )
+    permission_classes = [
+        IsAutorModeratorAdminOrReadOnly, ]
     pagination_class = LimitOffsetPagination
 
+    def get_queryset(self):
+        review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
+        return review.comments.all()
+
     def perform_create(self, serializer):
-        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        title_id = self.kwargs.get('title_id')
+        review_id = self.kwargs.get('review_id')
+        review = get_object_or_404(Review, id=review_id, title=title_id)
         serializer.save(author=self.request.user, review=review)
 
+
+class ReviewsViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewsSerializer
+    permission_classes = [IsAutorModeratorAdminOrReadOnly, ]
+    pagination_class = LimitOffsetPagination
+
     def get_queryset(self):
-        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
-        return review.comments.all()
+        title = get_object_or_404(
+            Title,
+            id=self.kwargs.get('title_id'))
+        return title.reviews.all()
+
+    def perform_create(self, serializer):
+        title = get_object_or_404(
+            Title,
+            id=self.kwargs.get('title_id'))
+        serializer.save(author=self.request.user, title=title)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -125,7 +131,7 @@ class SignupViewSet(viewsets.ViewSet):
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('review__score'))
+    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     serializer_class = TitlesSerializer
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = PageNumberPagination
@@ -146,7 +152,6 @@ class ReviewGenreModelMixin(
     viewsets.GenericViewSet
 ):
     permission_classes = [
-        IsAutorModeratorAdminOrReadOnly,
         IsAdminOrReadOnly
     ]
     filter_backends = (filters.SearchFilter,)

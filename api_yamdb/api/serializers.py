@@ -1,12 +1,17 @@
 import datetime as dt
-
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from reviews.models import Comment, Review, Category, Genre, Title
 from users.models import User
+from django.shortcuts import get_object_or_404
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    review = serializers.SlugRelatedField(
+        slug_field='text',
+        read_only=True
+    )
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username'
@@ -17,30 +22,32 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
 
 
-class ReviewSerializer(serializers.ModelSerializer):
+class ReviewsSerializer(serializers.ModelSerializer):
+    title = serializers.SlugRelatedField(
+        slug_field='name',
+        read_only=True
+    )
     author = serializers.SlugRelatedField(
         slug_field='username',
-        read_only=True,
-        default=serializers.CurrentUserDefault()
+        read_only=True
     )
     score = serializers.IntegerField(max_value=10, min_value=1)
 
-    class Meta():
+    def validate(self, data):
+        request = self.context['request']
+        author = request.user
+        title_id = self.context.get('view').kwargs.get('title_id')
+        title = get_object_or_404(Title, pk=title_id)
+        if (
+            request.method == 'POST'
+            and Review.objects.filter(title=title, author=author).exists()
+        ):
+            raise ValidationError('нельзя добавить второй отзыв на то же самое произведение.')
+        return data
+
+    class Meta:
         fields = '__all__'
         model = Review
-
-    def validate(self, data):
-        request = self.context['request'].method
-        author = self.context['request'].user
-        title_id = self.context['view'].kwargs.get('title')
-        if request == 'POST' and Review.objects.filter(
-                                                        title=title_id,
-                                                        author=author).exists:
-            raise serializers.ValidationError(
-                'Вы уже написали отзыв')
-        elif request != 'POST':
-            return data
-        return data
 
 
 class GenresSerializer(serializers.ModelSerializer):

@@ -70,12 +70,14 @@ class Review(models.Model):
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        verbose_name='Название произведения')
+        verbose_name='Название произведения',
+        related_name='reviews')
     text = models.TextField(verbose_name='Текст обзора')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Автор')
+        verbose_name='Автор',
+        related_name='reviews')
     score = models.PositiveSmallIntegerField(
         default=0,
         validators=[MinValueValidator(ONE), MaxValueValidator(TEN)],
