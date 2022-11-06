@@ -4,7 +4,6 @@ from django.core.validators import MinLengthValidator
 
 
 class User(AbstractUser):
-    """Кастомная модель User"""
     USER = 'user'
     MODERATOR = 'moderator'
     ADMIN = 'admin'

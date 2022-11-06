@@ -6,13 +6,11 @@ from .models import User
 
 
 class TokenSerializer(serializers.Serializer):
-    """Токен."""
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Пользователь."""
     username = serializers.CharField(required=True, validators=[
         MinLengthValidator(
             3,
@@ -32,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SignupSerializer(UserSerializer):
-    """Регистрация пользователя."""
+
     class Meta:
         fields = ('username', 'email')
         model = User

@@ -2,14 +2,12 @@ import csv
 import os
 
 from api_yamdb.settings import BASE_DIR
-from reviews.models import Genre, Category, Title, Review, Comment, GenreTitle
+from reviews.models import Comment, Category, Genre, GenreTitle, Title, Review
 from users.models import User
 
 path = os.path.join(BASE_DIR, 'static/data/')
 os.chdir(path)
 
-# python manage.py shell
-# >>> exec(open('csv_import_script.py').read())
 # Скрипт для испорта из файла CSV в базу данных User
 with open('users.csv', mode="r", encoding="utf-8") as file:
     reader = csv.DictReader(file)

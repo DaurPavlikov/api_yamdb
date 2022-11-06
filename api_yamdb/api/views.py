@@ -65,7 +65,6 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """Api управления пользователями."""
     queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
     permission_classes = (IsAdmin, )
@@ -91,7 +90,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class SignupViewSet(viewsets.ViewSet):
-    """Api авторизации."""
     permission_classes = [permissions.AllowAny, ]
 
     def signup(self, request):
@@ -116,7 +114,6 @@ class SignupViewSet(viewsets.ViewSet):
         )
 
     def gettoken(self, request):
-        """Функция получения токена авторизации."""
         serializer = TokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         username = serializer.data.get('username')
