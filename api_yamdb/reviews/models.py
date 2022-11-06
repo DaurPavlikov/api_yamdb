@@ -11,25 +11,30 @@ CUTTING_LENGTH = 20
 
 
 class Genre(models.Model):
-    """Модель жанры, многие ко многим"""
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=50, unique=True)
+
+    class Meta():
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
 
     def __str__(self):
         return self.slug
 
 
 class Category(models.Model):
-    """Модель категории одно ко многим """
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=50, unique=True)
+
+    class Meta():
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
         return self.slug
 
 
 class Title(models.Model):
-    """Базовая модель произведения."""
     name = models.TextField()
     year = models.IntegerField(
         'Год релиза',
@@ -62,6 +67,9 @@ class Title(models.Model):
 class GenreTitle(models.Model):
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
+
+    class Meta():
+        verbose_name = 'Жанр произведения'
 
     def __str__(self) -> str:
         return f'{self.genre} {self.title}'

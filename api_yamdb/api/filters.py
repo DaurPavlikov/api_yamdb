@@ -4,8 +4,6 @@ from reviews.models import Title
 
 
 class TitleFilter(rest_framework.FilterSet):
-    """Фильтры для произведений."""
-
     genre = rest_framework.CharFilter(field_name="genre__slug")
     category = rest_framework.CharFilter(field_name="category__slug")
     name = rest_framework.CharFilter(

@@ -1,8 +1,9 @@
 import datetime as dt
+
 from django.core.exceptions import ValidationError
-from rest_framework import serializers
-from reviews.models import Comment, Review, Category, Genre, Title
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
+from reviews.models import Comment, Category, Genre, Title, Review
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -40,7 +41,9 @@ class ReviewsSerializer(serializers.ModelSerializer):
             request.method == 'POST'
             and Review.objects.filter(title=title, author=author).exists()
         ):
-            raise ValidationError('нельзя добавить второй отзыв на то же самое произведение.')
+            raise ValidationError(
+                'Нельзя добавить второй отзыв на то же самое произведение.'
+            )
         return data
 
     class Meta:
@@ -49,7 +52,6 @@ class ReviewsSerializer(serializers.ModelSerializer):
 
 
 class GenresSerializer(serializers.ModelSerializer):
-    """Жанры, описание."""
 
     class Meta:
         model = Genre
@@ -57,7 +59,6 @@ class GenresSerializer(serializers.ModelSerializer):
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-    """Категории, описание."""
 
     class Meta:
         model = Category
@@ -65,8 +66,6 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class TitlesSerializer(serializers.ModelSerializer):
-    """Основной метод записи информации."""
-
     category = serializers.SlugRelatedField(
         slug_field='slug', many=False, queryset=Category.objects.all()
     )
@@ -89,8 +88,6 @@ class TitlesSerializer(serializers.ModelSerializer):
 
 
 class TitlesViewSerializer(serializers.ModelSerializer):
-    """Основной метод получения информации."""
-
     category = CategoriesSerializer(many=False, required=True)
     genre = GenresSerializer(many=True, required=False)
     rating = serializers.IntegerField()
