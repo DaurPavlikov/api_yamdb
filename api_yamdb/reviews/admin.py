@@ -26,7 +26,7 @@ class CommentAdmin(admin.ModelAdmin):
         'pub_date'
     )
     search_fields = ('text', 'author')
-    list_filter = ('pub_date',)
+    list_filter = ('pub_date', 'author')
     empty_value_display = '-пусто-'
 
 
