@@ -13,7 +13,7 @@ class ReviewAdmin(admin.ModelAdmin):
         'pub_date'
     )
     search_fields = ('title',)
-    list_filter = ('pub_date',)
+    list_filter = ('pub_date', 'author',)
     empty_value_display = '-пусто-'
 
 
@@ -26,7 +26,7 @@ class CommentAdmin(admin.ModelAdmin):
         'pub_date'
     )
     search_fields = ('text', 'author')
-    list_filter = ('pub_date',)
+    list_filter = ('pub_date','author',)
     empty_value_display = '-пусто-'
 
 
@@ -37,7 +37,7 @@ class GenreAdmin(admin.ModelAdmin):
         'slug',
     )
     search_fields = ('name', )
-    list_filter = ('name',)
+    list_filter = ('name', )
     empty_value_display = '-пусто-'
 
 
