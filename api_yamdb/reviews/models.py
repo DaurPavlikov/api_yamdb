@@ -7,7 +7,7 @@ from reviews.validators import validate_year
 
 MIN_VALUE = MinValueValidator(1)
 MAX_VALUE = MaxValueValidator(30)
-CUTTING_LENGTH = 20
+CUTTING_LENGTH = 30
 
 
 class Genre(models.Model):
@@ -96,6 +96,11 @@ class Review(models.Model):
                                     verbose_name='Дата обзора',
                                     db_index=True)
 
+    @property
+    def short_text(self):
+        return self.text[:CUTTING_LENGTH]
+    short_text.fget.short_description = 'Текст'
+
     class Meta():
         ordering = ['-pub_date']
         verbose_name = 'Обзор'
@@ -105,7 +110,7 @@ class Review(models.Model):
                 fields=['title', 'author'], name='unique')]
 
     def __str__(self) -> str:
-        self.text[:CUTTING_LENGTH]
+        return self.text[:CUTTING_LENGTH]
 
 
 class Comment(models.Model):
