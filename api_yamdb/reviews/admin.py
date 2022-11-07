@@ -13,7 +13,7 @@ class ReviewAdmin(admin.ModelAdmin):
         'pub_date'
     )
     search_fields = ('title',)
-    list_filter = ('pub_date',)
+    list_filter = ('pub_date', 'author',)
     empty_value_display = '-пусто-'
     list_display_links = ('short_text',)
 
