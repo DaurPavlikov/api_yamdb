@@ -65,7 +65,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
         fields = ('name', 'slug')
 
 
-class TitlesSerializer(serializers.ModelSerializer):
+class TitlesCreateSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug', many=False, queryset=Category.objects.all()
     )
@@ -87,7 +87,7 @@ class TitlesSerializer(serializers.ModelSerializer):
         return year
 
 
-class TitlesViewSerializer(serializers.ModelSerializer):
+class TitlesReadSerializer(serializers.ModelSerializer):
     category = CategoriesSerializer(many=False, required=True)
     genre = GenresSerializer(many=True, required=False)
     rating = serializers.IntegerField()
