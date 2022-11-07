@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
 
+from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from reviews.models import Review, Title, Category, Genre
 from users.permissions import (
     IsAutorModeratorAdminOrReadOnly,
@@ -20,12 +21,12 @@ from users.serializers import (
     UserSerializer,
 )
 from users.models import User
-from api.filters import TitleFilter
-from api.serializers import (
+from .filters import TitleFilter
+from .serializers import (
     CategoriesSerializer,
     GenresSerializer,
-    TitlesSerializer,
-    TitlesViewSerializer,
+    TitlesCreateSerializer,
+    TitlesReadSerializer,
     CommentSerializer,
     ReviewsSerializer,
 )
@@ -38,7 +39,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
-        return review.comments.all()
+        return review.comments.select_related('author', 'review').all()
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
@@ -55,7 +56,7 @@ class ReviewsViewSet(viewsets.ModelViewSet):
         title = get_object_or_404(
             Title,
             id=self.kwargs.get('title_id'))
-        return title.reviews.all()
+        return title.reviews.select_related('author', 'title').all()
 
     def perform_create(self, serializer):
         title = get_object_or_404(
@@ -105,7 +106,7 @@ class SignupViewSet(viewsets.ViewSet):
         confirmation_code = default_token_generator.make_token(user)
         email_header = 'Код подтверждения для Yamdb'
         message = f'Ваш код подтверждения: {confirmation_code}'
-        from_email = 'signup@yamdb.su'
+        from_email = DEFAULT_FROM_EMAIL
         send_mail(
             email_header, message, from_email, [email], fail_silently=False
         )
@@ -129,8 +130,12 @@ class SignupViewSet(viewsets.ViewSet):
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
-    serializer_class = TitlesSerializer
+    queryset = Title.objects.select_related(
+        'category'
+    ).prefetch_related(
+        'genre'
+    ).annotate(rating=Avg('reviews__score'))
+    serializer_class = TitlesCreateSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = TitleFilter
     filter_backends = (DjangoFilterBackend,)
@@ -138,8 +143,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
-            return TitlesViewSerializer
-        return TitlesSerializer
+            return TitlesReadSerializer
+        return TitlesCreateSerializer
 
 
 class ReviewGenreModelMixin(
