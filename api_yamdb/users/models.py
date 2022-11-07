@@ -27,14 +27,16 @@ class User(AbstractUser):
     password = models.CharField(max_length=100, blank=True)
     role = models.CharField(
         'Роль',
-        max_length=10,
+        max_length=30,
         choices=ROLE_CHOICES,
         default=USER
     )
 
+    @property
     def is_moderator(self):
         return self.role == self.MODERATOR
 
+    @property
     def is_admin(self):
         return self.role == self.ADMIN or self.is_superuser
 

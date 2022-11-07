@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
 
+from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from reviews.models import Review, Title, Category, Genre
 from users.permissions import (
     IsAutorModeratorAdminOrReadOnly,
@@ -105,7 +106,7 @@ class SignupViewSet(viewsets.ViewSet):
         confirmation_code = default_token_generator.make_token(user)
         email_header = 'Код подтверждения для Yamdb'
         message = f'Ваш код подтверждения: {confirmation_code}'
-        from_email = 'signup@yamdb.su'
+        from_email = DEFAULT_FROM_EMAIL
         send_mail(
             email_header, message, from_email, [email], fail_silently=False
         )
